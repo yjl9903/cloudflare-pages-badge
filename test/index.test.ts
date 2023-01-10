@@ -41,7 +41,7 @@ describe('Worker', () => {
     if (resp) {
       const text = await resp.text();
       expect(text).toMatchInlineSnapshot(
-        '"{\\"host\\":\\"0.0.0.0\\",\\"markdown\\":\\"[![123](https://img.shields.io/endpoint?url=https://0.0.0.0/project/123)](456)\\"}"'
+        '"{\\"markdown\\":\\"[![123](https://img.shields.io/endpoint?url=https://0.0.0.0/project/123)](456)\\"}"'
       );
     }
   });
