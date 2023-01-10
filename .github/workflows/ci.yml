@@ -27,3 +27,5 @@ jobs:
 
       - name: Build
         run: pnpm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
