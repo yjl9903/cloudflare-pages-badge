@@ -1,16 +1,7 @@
 import type { Env } from './types';
 
 import { getProject } from './project';
-import { createResponse } from './shield';
-
-function createErrorResponse(detail: string, status = 400) {
-  return new Response(JSON.stringify({ status: 'error', detail }), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-    },
-  });
-}
+import { createShieldResponse } from './shield';
 
 export default {
   async fetch(
@@ -22,15 +13,14 @@ export default {
 
     if (url.pathname.startsWith('/project/')) {
       const projectName = url.pathname.split('/')[2];
-
       if (!projectName) {
-        return createErrorResponse(`You should provide a pages project`);
+        return makeErrorResponse(`You should provide a pages project`);
       }
 
       try {
         const project = await getProject(env, projectName);
         if (!project) {
-          return createErrorResponse(`Pages project is not found`);
+          return makeErrorResponse(`Pages project is not found`);
         }
 
         const status = project?.canonical_deployment?.latest_stage?.status;
@@ -39,20 +29,47 @@ export default {
             message: 'Failed to resolve project status',
             response: project,
           });
-          return createErrorResponse('Failed to resolve project status');
+          return makeErrorResponse('Failed to resolve project status');
         }
 
-        return new Response(JSON.stringify(createResponse(status)), {
-          headers: {
-            'content-type': 'application/json; charset=utf-8',
-          },
-        });
+        return makeResponse(createShieldResponse(status));
       } catch (error) {
         console.log((error as Error).toString());
-        return createErrorResponse('Failed to resolve project');
+        return makeErrorResponse('Failed to resolve project');
       }
+    } else if (
+      url.pathname.startsWith('/markdown/') ||
+      url.pathname.startsWith('/md/')
+    ) {
+      const projectName = url.pathname.split('/')[2];
+      const target = url.searchParams.get('url') ?? '';
+      if (!projectName) {
+        return makeErrorResponse(`You should provide a pages project`);
+      }
+      return makeResponse({
+        host: url.hostname,
+        markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${url.hostname}/project/${projectName})](${target})`,
+      });
     } else {
-      return createErrorResponse(`Not implemented`);
+      return makeErrorResponse(`Not implemented`);
     }
   },
 };
+
+function makeResponse<T extends any>(detail: T, status = 200) {
+  return new Response(JSON.stringify(detail), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+    },
+  });
+}
+
+function makeErrorResponse(detail: string, status = 400) {
+  return new Response(JSON.stringify({ status: 'error', detail }), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+    },
+  });
+}
