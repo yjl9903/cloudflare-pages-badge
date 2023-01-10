@@ -37,7 +37,7 @@ describe('Worker', () => {
   });
 
   it('should return markdown', async () => {
-    const resp = await worker.fetch('/markdown/123?url=456');
+    const resp = await worker.fetch('/markdown/123?url=456&host=0.0.0.0');
     if (resp) {
       const text = await resp.text();
       expect(text).toMatchInlineSnapshot(

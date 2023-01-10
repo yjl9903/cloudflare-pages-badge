@@ -42,13 +42,14 @@ export default {
       url.pathname.startsWith('/md/')
     ) {
       const projectName = url.pathname.split('/')[2];
-      const target = url.searchParams.get('url') ?? '';
       if (!projectName) {
         return makeErrorResponse(`You should provide a pages project`);
       }
+      const target = url.searchParams.get('url') ?? '';
+      const host = url.searchParams.get('host') ?? request.headers.get('host');
       return makeResponse({
         host: url.hostname,
-        markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${url.hostname}/project/${projectName})](${target})`,
+        markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${host}/project/${projectName})](${target})`,
       });
     } else {
       return makeErrorResponse(`Not implemented`);
