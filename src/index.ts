@@ -48,7 +48,6 @@ export default {
       const target = url.searchParams.get('url') ?? '';
       const host = url.searchParams.get('host') ?? request.headers.get('host');
       return makeResponse({
-        host: url.hostname,
         markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${host}/project/${projectName})](${target})`,
       });
     } else {
