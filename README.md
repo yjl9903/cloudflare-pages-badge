@@ -12,10 +12,16 @@ Personal demo use `https://img.shields.io/endpoint?url=https://pages.onekuma.cn/
 
 ## Deploy
 
+> **Prerequisite**
+>
+> Install latest [wrangler](https://github.com/cloudflare/wrangler2) globally.
+
 ```bash
-npx wrangler secret put CF_ACCOUNT_ID
-npx wrangler secret put CF_API_TOKEN
-npx wrangler publish
+git clone https://github.com/yjl9903/cloudflare-pages-badge.git
+cd cloudflare-pages-badge
+wrangler secret put CF_ACCOUNT_ID
+wrangler secret put CF_API_TOKEN
+wrangler publish
 ```
 
 Then, you can use `https://img.shields.io/endpoint?url=https://<domain>/project/<name>`.
