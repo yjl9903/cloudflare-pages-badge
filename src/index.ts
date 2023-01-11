@@ -32,7 +32,9 @@ export default {
           return makeErrorResponse('Failed to resolve project status');
         }
 
-        return makeResponse(createShieldResponse(status));
+        return makeResponse(
+          createShieldResponse({ label: url.searchParams.get('label'), status })
+        );
       } catch (error) {
         console.log((error as Error).toString());
         return makeErrorResponse('Failed to resolve project');
@@ -45,10 +47,14 @@ export default {
       if (!projectName) {
         return makeErrorResponse(`You should provide a pages project`);
       }
+
       const target = url.searchParams.get('url') ?? '';
+      const label = url.searchParams.get('label') ?? '';
+      const labelText = label !== '' ? `?label=${label}` : '';
       const host = url.searchParams.get('host') ?? request.headers.get('host');
+
       return makeResponse({
-        markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${host}/project/${projectName})](${target})`,
+        markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${host}/project/${projectName}${labelText})](${target})`,
       });
     } else {
       return makeErrorResponse(`Not implemented`);

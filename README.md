@@ -6,9 +6,9 @@
 
 Personal demo use `https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/<name>`.
 
-+ XLor's Blog: [![blog](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/xlor)](https://xlor.cn)
-+ Anime Paste: [![animepaste](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/animepaste)](https://anime.xlorpaste.cn)
-+ 弥希 Miki 的舰长日报: [![miki](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/miki)](https://miki.xlor.cn/)
++ XLor's Blog: [![blog](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/xlor?label=XLor)](https://xlor.cn)
++ Anime Paste: [![animepaste](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/animepaste?label=AnimePaste)](https://anime.xlorpaste.cn)
++ 弥希 Miki 的舰长日报: [![miki](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/miki?label=Miki)](https://miki.xlor.cn/)
 
 ## Deploy
 

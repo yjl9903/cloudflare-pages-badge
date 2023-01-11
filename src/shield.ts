@@ -21,10 +21,16 @@ const colors: Record<ProjectStageStatus, string> = {
   active: 'green',
 };
 
-export function createShieldResponse(status: ProjectStageStatus): ShieldResponse {
+export function createShieldResponse(options: {
+  label?: string | null | undefined;
+  status: ProjectStageStatus;
+}): ShieldResponse {
+  const label = options?.label ?? 'Cloudflare Pages';
+  const status = options.status;
+
   return {
     schemaVersion: 1,
-    label: 'Cloudflare Pages',
+    label,
     message: status,
     color: colors[status] || 'grey',
     isError: errorStatuses.has(status),
