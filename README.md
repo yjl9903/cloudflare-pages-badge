@@ -4,7 +4,7 @@
 
 ## Demo
 
-Personal demo use `https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/<name>`.
+Personal demo use `https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/<name>&label=<display_name>`.
 
 + XLor's Blog: [![blog](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/xlor?label=XLor)](https://xlor.cn)
 + Anime Paste: [![animepaste](https://img.shields.io/endpoint?url=https://pages.onekuma.cn/project/animepaste?label=AnimePaste)](https://anime.xlorpaste.cn)
