@@ -1,81 +1,65 @@
+import { Hono } from 'hono';
+
 import type { Env } from './types';
 
 import { getProject } from './project';
 import { createShieldResponse } from './shield';
 
-export default {
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: ExecutionContext
-  ): Promise<Response> {
-    const url = new URL(request.url);
+const app = new Hono<{
+  Bindings: Env;
+}>();
 
-    if (url.pathname.startsWith('/project/')) {
-      const projectName = url.pathname.split('/')[2];
-      if (!projectName) {
-        return makeErrorResponse(`You should provide a pages project`);
-      }
+app.all('/project/:name', async ctx => {
+  const name = ctx.req.param('name');
 
-      try {
-        const project = await getProject(env, projectName);
-        if (!project) {
-          return makeErrorResponse(`Pages project is not found`);
-        }
-
-        const status = project?.canonical_deployment?.latest_stage?.status;
-        if (!status) {
-          console.error({
-            message: 'Failed to resolve project status',
-            response: project,
-          });
-          return makeErrorResponse('Failed to resolve project status');
-        }
-
-        return makeResponse(
-          createShieldResponse({ label: url.searchParams.get('label'), status })
-        );
-      } catch (error) {
-        console.log((error as Error).toString());
-        return makeErrorResponse('Failed to resolve project');
-      }
-    } else if (
-      url.pathname.startsWith('/markdown/') ||
-      url.pathname.startsWith('/md/')
-    ) {
-      const projectName = url.pathname.split('/')[2];
-      if (!projectName) {
-        return makeErrorResponse(`You should provide a pages project`);
-      }
-
-      const target = url.searchParams.get('url') ?? '';
-      const label = url.searchParams.get('label') ?? '';
-      const labelText = label !== '' ? `?label=${label}` : '';
-      const host = url.searchParams.get('host') ?? request.headers.get('host');
-
-      return makeResponse({
-        markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${host}/project/${projectName}${labelText})](${target})`,
+  try {
+    const project = await getProject(ctx.env, name);
+    if (!project) {
+      ctx.status(404);
+      return ctx.json({
+        status: 'error',
+        detail: 'You should provide a pages project',
       });
-    } else {
-      return makeErrorResponse(`Not implemented`);
     }
-  },
-};
 
-function makeResponse<T extends any>(detail: T, status = 200) {
-  return new Response(JSON.stringify(detail), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-    },
-  });
-}
+    const status = project?.canonical_deployment?.latest_stage?.status;
+    if (!status) {
+      console.error({
+        message: 'Failed to resolve project status',
+        response: project,
+      });
 
-function makeErrorResponse(detail: string, status = 400) {
-  return new Response(JSON.stringify({ status: 'error', detail }), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-    },
+      ctx.status(500);
+      return ctx.json({
+        status: 'error',
+        detail: 'Failed to resolve project status',
+      });
+    }
+
+    const label = ctx.req.query('label');
+    return ctx.json(createShieldResponse({ label, status }));
+  } catch (error) {
+    console.error(error);
+
+    ctx.status(500);
+    return ctx.json({
+      status: 'error',
+      detail: 'Failed to resolve project',
+    });
+  }
+});
+
+app.all('/markdown/:name', async ctx => {
+  const projectName = ctx.req.param('name');
+
+  const target = ctx.req.query('url') ?? '';
+  const label = ctx.req.query('label') ?? '';
+  const labelText = label !== '' ? `?label=${label}` : '';
+  const host = ctx.req.query('host') ?? ctx.req.header('host');
+
+  return ctx.json({
+    markdown: `[![${projectName}](https://img.shields.io/endpoint?url=https://${host}/project/${projectName}${labelText})](${target})`,
   });
-}
+});
+
+export default app;

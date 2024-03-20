@@ -1,8 +1,8 @@
-export interface Env {
+export type Env = {
   CF_ACCOUNT_ID: string;
 
   CF_API_TOKEN: string;
-}
+};
 
 export interface CloudflareResponse<T> {
   success: boolean;
